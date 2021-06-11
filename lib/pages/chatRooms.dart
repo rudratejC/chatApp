@@ -1,3 +1,4 @@
+import 'package:chat_app/helper/sharedpref_helper.dart';
 import 'package:chat_app/pages/search.dart';
 import 'package:chat_app/utils/colors.dart';
 import 'package:flutter/material.dart';
@@ -14,14 +15,17 @@ class _ChatRoomState extends State<ChatRoom> {
       backgroundColor: MyColors.primColor,
       body: Container(
         child: Center(
-          child: Text("ChatRooms"),
+          child: Text(
+            "${SharedPreferenceHelper().getUserEmail().toString()}",
+            style: TextStyle(color: MyColors.secColor),
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.search),
         onPressed: () {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => Search()));
+          // Navigator.push(
+          //     context, MaterialPageRoute(builder: (context) => Search()));
         },
       ),
     );

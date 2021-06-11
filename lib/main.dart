@@ -1,7 +1,8 @@
-import 'package:chat_app/helper/authenticate.dart';
+import 'package:chat_app/pages/chatRooms.dart';
 import 'package:chat_app/pages/search.dart';
 import 'package:chat_app/pages/signin.dart';
-import 'package:chat_app/pages/signup.dart';
+import 'package:chat_app/services/auth.dart';
+
 import 'package:chat_app/utils/colors.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -21,9 +22,17 @@ class MyApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       //home: SignIn(),
-      //home: SignUp(),
+      home: FutureBuilder(
+          future: AuthMethods().getCurrentUser(),
+          builder: (context, AsyncSnapshot<dynamic> snapshot) {
+            if (snapshot.hasData) {
+              return ChatRoom();
+            } else {
+              return SignIn();
+            }
+          }),
+
       //home: Search(),
-      home: Authenticate(),
     );
   }
 }

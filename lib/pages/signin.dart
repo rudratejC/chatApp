@@ -1,43 +1,50 @@
 import 'package:chat_app/pages/chatRooms.dart';
 import 'package:chat_app/services/auth.dart';
+import 'package:chat_app/services/database.dart';
 import 'package:chat_app/utils/colors.dart';
+import 'package:chat_app/utils/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 class SignIn extends StatefulWidget {
-  final Function toggleView;
-  SignIn(this.toggleView);
   @override
-  _SignInState createState() => _SignInState();
+  _SignUpState createState() => _SignUpState();
 }
 
-class _SignInState extends State<SignIn> {
+class _SignUpState extends State<SignIn> {
   bool isLoading = false;
   var devWidth;
   var devheight;
   TextEditingController emailEditingController = new TextEditingController();
   TextEditingController passwordEditingController = new TextEditingController();
-  // TextEditingController usernameEditingController =
-  //     new TextEditingController();
+  TextEditingController usernameEditingController = new TextEditingController();
   final formKey = GlobalKey<FormState>();
 
   AuthMethods authMethods = new AuthMethods();
-  signMeIn() {
-    if (formKey.currentState.validate()) {
-      setState(() {
-        isLoading = true;
-      });
-      authMethods
-          .signInWithEmailAndPassword(
-              emailEditingController.text, passwordEditingController.text)
-          .then((value) {
-        print("we got $value from firebase");
-      });
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => ChatRoom()));
-    }
-  }
+  DatabaseMethods databaseMethods = new DatabaseMethods();
+
+  // signMeUp() {
+  //   if (formKey.currentState.validate()) {
+  //     Map<String, String> userInfoMap = {
+  //       "name": usernameEditingController.text,
+  //       "email": emailEditingController.text
+  //     };
+  //     setState(() {
+  //       isLoading = true;
+  //     });
+  //     authMethods
+  //         .signUpWithEmailAndPassword(
+  //             emailEditingController.text, passwordEditingController.text)
+  //         .then((value) {
+  //       print("we got $value from firebase");
+  //     });
+
+  //     databaseMethods.uploadUserInfo(userInfoMap);
+  //     Navigator.pushReplacement(
+  //         context, MaterialPageRoute(builder: (context) => ChatRoom()));
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -45,33 +52,39 @@ class _SignInState extends State<SignIn> {
     devheight = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: MyColors.primColor,
-      body: SingleChildScrollView(
-        child: Container(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                height: devheight * 0.35,
-                width: devWidth,
-                child: topbar(),
-                decoration: BoxDecoration(
-                  color: MyColors.primColor,
+      body: isLoading
+          ? Container(
+              child: Center(child: CircularProgressIndicator()),
+            )
+          : SingleChildScrollView(
+              child: SafeArea(
+                child: Container(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        height: devheight * 0.35,
+                        width: devWidth,
+                        child: topbar(),
+                        decoration: BoxDecoration(
+                          color: MyColors.primColor,
+                        ),
+                      ),
+                      Container(
+                        height: 700,
+                        width: devWidth,
+                        child: BtnWidget(),
+                        decoration: BoxDecoration(
+                            color: MyColors.secColor,
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(20),
+                                topRight: Radius.circular(29))),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              Container(
-                height: 700,
-                width: devWidth,
-                child: formWidget(),
-                decoration: BoxDecoration(
-                    color: MyColors.secColor,
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        topRight: Radius.circular(29))),
-              ),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 
@@ -83,6 +96,9 @@ class _SignInState extends State<SignIn> {
           Image.asset(
             'assets/images/signup.png',
             height: devheight * 0.1,
+          ),
+          SizedBox(
+            height: devheight * 0.02,
           ),
           Text(
             'Welcome to ChatApp',
@@ -118,152 +134,98 @@ class _SignInState extends State<SignIn> {
     );
   }
 
-  Widget formWidget() {
+  Widget BtnWidget() {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24),
       child: Column(
         children: [
-          Form(
-            key: formKey,
-            child: Column(
-              children: [
-                SizedBox(
-                  height: 50,
-                ),
-                TextFormField(
-                  validator: (val) {
-                    return RegExp(
-                                r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                            .hasMatch(val)
-                        ? null
-                        : "Please Enter Correct Email";
-                  },
-                  controller: emailEditingController,
-                  style: simpleTextStyle(),
-                  decoration: textFieldInputDecoration("Enter email"),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                TextFormField(
-                  obscureText: true,
-                  validator: (val) {
-                    return val.length > 6
-                        ? null
-                        : "Enter Password 6+ characters";
-                  },
-                  style: simpleTextStyle(),
-                  controller: passwordEditingController,
-                  decoration: textFieldInputDecoration("Enter password"),
-                ),
-                SizedBox(
-                  height: 16,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        // Navigator.push(
-                        //     context,
-                        //     MaterialPageRoute(
-                        //         builder: (context) => ForgotPassword()));
-                      },
-                      child: Container(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                          child: Text(
-                            "Forgot Password?",
-                            style: simpleTextStyle(),
-                          )),
-                    )
-                  ],
-                ),
-                SizedBox(
-                  height: 16,
-                ),
-                GestureDetector(
-                  onTap: () {
-                    signMeIn();
-                  },
-                  child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 16),
-                    decoration: BoxDecoration(
-                      color: MyColors.primColor,
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    width: MediaQuery.of(context).size.width,
-                    child: Text(
-                      "Sign In",
-                      style: GoogleFonts.lato(
-                          color: MyColors.secColor, fontSize: devheight * 0.02),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 16,
-                ),
-                Container(
+          Column(
+            children: [
+              SizedBox(
+                height: 50,
+              ),
+              SizedBox(
+                height: 16,
+              ),
+              GestureDetector(
+                onTap: () {
+                  // signIn();
+                  //signMeUp();
+                  print("hello google");
+                  AuthMethods().SignInWithGoogle(context);
+                },
+                child: Container(
                   padding: EdgeInsets.symmetric(vertical: 16),
                   decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30),
-                      color: MyColors.primColor),
+                    color: MyColors.primColor,
+                    borderRadius: BorderRadius.circular(30),
+                  ),
                   width: MediaQuery.of(context).size.width,
-                  child: Text(
-                    "Sign In with Google",
-                    style: GoogleFonts.lato(
-                        color: MyColors.secColor, fontSize: devheight * 0.02),
-                    textAlign: TextAlign.center,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        "assets/images/google.png",
+                        height: 30,
+                      ),
+                      SizedBox(
+                        width: 12,
+                      ),
+                      Text(
+                        "Sign In with Google",
+                        style: GoogleFonts.lato(
+                            color: MyColors.secColor,
+                            fontSize: devheight * 0.02),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
                   ),
                 ),
-                SizedBox(
-                  height: 16,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Don't have account? ",
-                      style: simpleTextStyle(),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        widget.toggleView();
-                      },
-                      child: Text(
-                        "Register now",
-                        style: GoogleFonts.lato(
-                            color: MyColors.primColor,
-                            fontSize: 16,
-                            decoration: TextDecoration.underline),
+              ),
+              SizedBox(
+                height: 16,
+              ),
+              GestureDetector(
+                onTap: () {
+                  // signIn();
+                  //signMeUp();
+                  print("hello fb");
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 16),
+                  decoration: BoxDecoration(
+                    color: MyColors.primColor,
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  width: MediaQuery.of(context).size.width,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        "assets/images/fb.png",
+                        height: 30,
                       ),
-                    ),
-                  ],
+                      SizedBox(
+                        width: 12,
+                      ),
+                      Text(
+                        "Sign In with Facebook",
+                        style: GoogleFonts.lato(
+                            color: MyColors.secColor,
+                            fontSize: devheight * 0.02),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
                 ),
-              ],
-            ),
+              ),
+              SizedBox(
+                height: 16,
+              ),
+            ],
           ),
         ],
       ),
     );
   }
-}
-
-// paste this in widgets after completing
-
-InputDecoration textFieldInputDecoration(String hintText) {
-  return InputDecoration(
-    hintText: hintText,
-    hintStyle: GoogleFonts.lato(color: Colors.black54),
-    border: new OutlineInputBorder(
-      borderRadius: new BorderRadius.circular(25.0),
-      borderSide: new BorderSide(),
-    ),
-  );
-}
-
-TextStyle simpleTextStyle() {
-  return GoogleFonts.lato(
-      textStyle: TextStyle(color: MyColors.primColor, fontSize: 16));
 }
