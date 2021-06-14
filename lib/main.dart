@@ -22,17 +22,16 @@ class MyApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       //home: SignIn(),
-      home: FutureBuilder(
-          future: AuthMethods().getCurrentUser(),
-          builder: (context, AsyncSnapshot<dynamic> snapshot) {
-            if (snapshot.hasData) {
-              return ChatRoom();
-            } else {
-              return SignIn();
-            }
-          }),
-
-      //home: Search(),
+      // home: FutureBuilder(
+      //     future: AuthMethods().getCurrentUser(),
+      //     builder: (context, AsyncSnapshot<dynamic> snapshot) {
+      //       if (snapshot.hasData) {
+      //         return ChatRoom();
+      //       } else {
+      //         return SignIn();
+      //       }
+      //     }),
+      home: ChatRoom(),
     );
   }
 }
