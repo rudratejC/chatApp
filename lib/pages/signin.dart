@@ -1,4 +1,4 @@
-import 'package:chat_app/pages/chatRooms.dart';
+import 'package:chat_app/pages/home.dart';
 import 'package:chat_app/services/auth.dart';
 import 'package:chat_app/services/database.dart';
 import 'package:chat_app/utils/colors.dart';
@@ -23,28 +23,6 @@ class _SignUpState extends State<SignIn> {
 
   AuthMethods authMethods = new AuthMethods();
   DatabaseMethods databaseMethods = new DatabaseMethods();
-
-  // signMeUp() {
-  //   if (formKey.currentState.validate()) {
-  //     Map<String, String> userInfoMap = {
-  //       "name": usernameEditingController.text,
-  //       "email": emailEditingController.text
-  //     };
-  //     setState(() {
-  //       isLoading = true;
-  //     });
-  //     authMethods
-  //         .signUpWithEmailAndPassword(
-  //             emailEditingController.text, passwordEditingController.text)
-  //         .then((value) {
-  //       print("we got $value from firebase");
-  //     });
-
-  //     databaseMethods.uploadUserInfo(userInfoMap);
-  //     Navigator.pushReplacement(
-  //         context, MaterialPageRoute(builder: (context) => ChatRoom()));
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {

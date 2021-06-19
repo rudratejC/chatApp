@@ -1,4 +1,4 @@
-import 'package:chat_app/pages/chatRooms.dart';
+import 'package:chat_app/pages/home.dart';
 import 'package:chat_app/pages/search.dart';
 import 'package:chat_app/pages/signin.dart';
 import 'package:chat_app/services/auth.dart';
@@ -22,16 +22,16 @@ class MyApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       //home: SignIn(),
-      // home: FutureBuilder(
-      //     future: AuthMethods().getCurrentUser(),
-      //     builder: (context, AsyncSnapshot<dynamic> snapshot) {
-      //       if (snapshot.hasData) {
-      //         return ChatRoom();
-      //       } else {
-      //         return SignIn();
-      //       }
-      //     }),
-      home: ChatRoom(),
+      home: FutureBuilder(
+          future: AuthMethods().getCurrentUser(),
+          builder: (context, AsyncSnapshot<dynamic> snapshot) {
+            if (snapshot.hasData) {
+              return Home();
+            } else {
+              return SignIn();
+            }
+          }),
+      //home: Home(),
     );
   }
 }
