@@ -17,3 +17,9 @@ TextStyle simpleTextStyle() {
   return GoogleFonts.lato(
       textStyle: TextStyle(color: MyColors.primColor, fontSize: 16));
 }
+
+TextStyle chatTileStyle() {
+  return GoogleFonts.lato(
+    textStyle: TextStyle(fontSize: 20, fontWeight: FontWeight.w300),
+  );
+}

@@ -1,3 +1,4 @@
+import 'package:chat_app/helper/sharedpref_helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DatabaseMethods {
@@ -62,29 +63,20 @@ class DatabaseMethods {
         .orderBy("ts", descending: true)
         .snapshots();
   }
+
+  Future<Stream<QuerySnapshot>> getChatRooms() async {
+    String myUsername = await SharedPreferenceHelper().getUserName();
+    return FirebaseFirestore.instance
+        .collection("chatrooms")
+        .orderBy("lastMessageSendTs", descending: true)
+        .where("users", arrayContains: myUsername)
+        .snapshots();
+  }
+
+  Future<QuerySnapshot> getUserInfo(String username) async {
+    return await FirebaseFirestore.instance
+        .collection("users")
+        .where("username", isEqualTo: username)
+        .get();
+  }
 }
-// Future<void> uploadUserInfo(userData) async {
-//     FirebaseFirestore.instance
-//         .collection("users")
-//         .add(userData)
-//         .catchError((e) {
-//       print(e.toString());
-//     });
-//   }
-
-//   getUserInfo(String email) async {
-//     return FirebaseFirestore.instance
-//         .collection("users")
-//         .where("email", isEqualTo: email)
-//         .get()
-//         .catchError((e) {
-//       print(e.toString());
-//     });
-//   }
-
-//   searchByName(String searchField) {
-//     return FirebaseFirestore.instance
-//         .collection("users")
-//         .where('name', isEqualTo: searchField)
-//         .get();
-//   }

@@ -1,5 +1,4 @@
 import 'package:chat_app/pages/home.dart';
-import 'package:chat_app/pages/search.dart';
 import 'package:chat_app/pages/signin.dart';
 import 'package:chat_app/services/auth.dart';
 

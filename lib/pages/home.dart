@@ -1,7 +1,6 @@
 import 'package:chat_app/helper/sharedpref_helper.dart';
 
 import 'package:chat_app/pages/chatScreen.dart';
-import 'package:chat_app/pages/search.dart';
 import 'package:chat_app/pages/signin.dart';
 import 'package:chat_app/services/auth.dart';
 import 'package:chat_app/services/database.dart';
@@ -17,6 +16,8 @@ class Home extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();
 }
+
+Stream chatRoomsStream;
 
 class _HomeState extends State<Home> {
   bool isSearching = false;
@@ -41,9 +42,13 @@ class _HomeState extends State<Home> {
     }
   }
 
+  getChatRooms() async {
+    chatRoomsStream = await DatabaseMethods().getChatRooms();
+    setState(() {});
+  }
+
   onScreenLoaded() async {
     await getMyInfoFromSharedPreference();
-    //getChatRooms();
   }
 
   getUserName() async {
@@ -55,12 +60,18 @@ class _HomeState extends State<Home> {
   void initState() {
     getUserName();
     onScreenLoaded();
+    getChatRooms();
+    setState(() {});
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: MyColors.primColor,
       statusBarBrightness: Brightness.light,
       statusBarIconBrightness: Brightness.light,
     ));
     super.initState();
+  }
+
+  callHomesInit() {
+    initState();
   }
 
   onSearchBtnClicked() async {
@@ -75,6 +86,23 @@ class _HomeState extends State<Home> {
   searchBtnResponse() {
     isSearching = !isSearching;
     setState(() {});
+  }
+
+  Widget chatRoomsList() {
+    return StreamBuilder(
+      stream: chatRoomsStream,
+      builder: (context, snapshot) {
+        return snapshot.hasData
+            ? ListView.builder(
+                itemCount: snapshot.data.docs.length,
+                shrinkWrap: true,
+                itemBuilder: (context, index) {
+                  DocumentSnapshot ds = snapshot.data.docs[index];
+                  return ChatRoomListTile(ds["lastMessage"], ds.id, myUserName);
+                })
+            : Center(child: CircularProgressIndicator());
+      },
+    );
   }
 
   Widget searchListUserTile(
@@ -141,10 +169,6 @@ class _HomeState extends State<Home> {
                   child: CircularProgressIndicator(),
                 );
         });
-  }
-
-  Widget homesList() {
-    return Container();
   }
 
   @override
@@ -308,7 +332,7 @@ class _HomeState extends State<Home> {
                                 ),
                               ],
                             ),
-                            isSearching ? searchUsersList() : homesList(),
+                            isSearching ? searchUsersList() : chatRoomsList(),
                           ],
                         ),
                       ),
@@ -316,6 +340,70 @@ class _HomeState extends State<Home> {
                   )),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class ChatRoomListTile extends StatefulWidget {
+  final String lastMessage, chatRoomId, myUsername;
+  ChatRoomListTile(this.lastMessage, this.chatRoomId, this.myUsername);
+
+  @override
+  _ChatRoomListTileState createState() => _ChatRoomListTileState();
+}
+
+class _ChatRoomListTileState extends State<ChatRoomListTile> {
+  String profilePicUrl = "", name = "", username = "";
+
+  getThisUserInfo() async {
+    username =
+        widget.chatRoomId.replaceAll(widget.myUsername, "").replaceAll("_", "");
+    QuerySnapshot querySnapshot = await DatabaseMethods().getUserInfo(username);
+    name = "${querySnapshot.docs[0]["name"]}";
+    profilePicUrl = "${querySnapshot.docs[0]["profileUrl"]}";
+    setState(() {});
+  }
+
+  getChatRooms() async {
+    chatRoomsStream = await DatabaseMethods().getChatRooms();
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    getThisUserInfo();
+    getChatRooms();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    ChatScreen(username, name, profilePicUrl)));
+      },
+      child: Container(
+        padding: EdgeInsets.all(8),
+        margin: EdgeInsets.symmetric(vertical: 8),
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(30),
+              child: Image.network(
+                profilePicUrl,
+                height: 40,
+                width: 40,
+              ),
+            ),
+            SizedBox(width: 20),
+            Text(name, style: chatTileStyle())
+          ],
         ),
       ),
     );
