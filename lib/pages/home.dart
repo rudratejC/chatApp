@@ -9,6 +9,7 @@ import 'package:chat_app/utils/colors.dart';
 import 'package:chat_app/utils/styles.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -54,6 +55,11 @@ class _HomeState extends State<Home> {
   void initState() {
     getUserName();
     onScreenLoaded();
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: MyColors.primColor,
+      statusBarBrightness: Brightness.light,
+      statusBarIconBrightness: Brightness.light,
+    ));
     super.initState();
   }
 

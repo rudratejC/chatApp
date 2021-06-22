@@ -6,8 +6,14 @@ import 'package:chat_app/services/auth.dart';
 import 'package:chat_app/utils/colors.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 void main() async {
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    statusBarColor: MyColors.primColor,
+    statusBarBrightness: Brightness.light,
+    statusBarIconBrightness: Brightness.light,
+  ));
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(MyApp());

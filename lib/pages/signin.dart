@@ -127,9 +127,8 @@ class _SignUpState extends State<SignIn> {
               ),
               GestureDetector(
                 onTap: () {
-                  // signIn();
-                  //signMeUp();
-                  print("hello google");
+                  isLoading = !isLoading;
+                  setState(() {});
                   AuthMethods().SignInWithGoogle(context);
                 },
                 child: Container(

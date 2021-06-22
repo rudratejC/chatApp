@@ -3,6 +3,7 @@ import 'package:chat_app/services/database.dart';
 import 'package:chat_app/utils/colors.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:random_string/random_string.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -98,7 +99,8 @@ class _ChatScreenState extends State<ChatScreen> {
               child: Text(
                 message,
                 style: TextStyle(
-                    color: sendByMe ? Colors.white : Colors.black,
+                    //fontSize: MediaQuery.of(context).size.width * 0.04,
+                    color: Colors.white,
                     fontWeight: FontWeight.bold),
               )),
         ),
@@ -178,15 +180,15 @@ class _ChatScreenState extends State<ChatScreen> {
                   color: MyColors.primColor,
                   borderRadius: BorderRadius.circular(40),
                 ),
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: EdgeInsets.only(left: 16, right: 6),
                 child: Row(
                   children: [
                     Expanded(
                         child: TextField(
                       controller: messageTextEdittingController,
-                      onChanged: (value) {
-                        addMessage(false);
-                      },
+                      // onChanged: (value) {
+                      //   addMessage(false);
+                      // },
                       style: TextStyle(color: MyColors.secColor),
                       decoration: InputDecoration(
                           border: InputBorder.none,
@@ -195,6 +197,9 @@ class _ChatScreenState extends State<ChatScreen> {
                               fontWeight: FontWeight.w500,
                               color: MyColors.secColor.withOpacity(0.4))),
                     )),
+                    SizedBox(
+                      width: 12,
+                    ),
                     GestureDetector(
                       onTap: () {
                         addMessage(true);
@@ -202,9 +207,17 @@ class _ChatScreenState extends State<ChatScreen> {
                             "send clicked! ${messageTextEdittingController.text}");
                         setState(() {});
                       },
-                      child: Icon(
-                        Icons.send,
-                        color: MyColors.secColor,
+                      child: Container(
+                        height: 40,
+                        width: 40,
+                        decoration: BoxDecoration(
+                          color: MyColors.myMsgColor,
+                          borderRadius: BorderRadius.circular(40),
+                        ),
+                        child: Icon(
+                          Icons.send,
+                          color: MyColors.secColor,
+                        ),
                       ),
                     )
                   ],
