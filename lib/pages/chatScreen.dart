@@ -59,11 +59,19 @@ class _ChatScreenState extends State<ChatScreen> {
           .addMessage(chatRoomId, messageId, messageInfoMap)
           .then((value) {
         var usersList = chatRoomId.split("_");
+        var SendigUserName = "$myUserName\Name";
+        var RecivingUserName = "${widget.chatWithUsername}\Name";
+        var SendigUserPic = "$myUserName\Pic";
+        var RecivingUserPic = "${widget.chatWithUsername}\Pic";
         Map<String, dynamic> lastMessageInfoMap = {
           "lastMessage": message,
           "lastMessageSendTs": lastMessageTs,
           "lastMessageSendBy": myUserName,
-          "users": usersList
+          "users": usersList,
+          SendigUserName: myName,
+          SendigUserPic: myProfilePic,
+          RecivingUserName: widget.name,
+          RecivingUserPic: widget.profileurl
         };
 
         DatabaseMethods().updateLastMessageSend(chatRoomId, lastMessageInfoMap);

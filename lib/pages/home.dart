@@ -98,10 +98,53 @@ class _HomeState extends State<Home> {
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
                   DocumentSnapshot ds = snapshot.data.docs[index];
-                  return ChatRoomListTile(ds["lastMessage"], ds.id, myUserName);
+                  //return ChatRoomListTile(ds["lastMessage"], ds.id, myUserName);
+                  // return Text(
+                  //   ds.id.replaceAll(myUserName, "").replaceAll("_", ""),
+                  //   style: chatTileStyle(),
+                  // );
+                  var uName =
+                      ds.id.replaceAll(myUserName, "").replaceAll("_", "");
+                  return ChatRoomListTile(
+                      chatRoomId: ds.id,
+                      chatWithUsername: uName,
+                      recieverName: ds["$uName\Name"],
+                      reciverPic: ds["$uName\Pic"],
+                      lastMessage: ds["lastMessage"]);
                 })
             : Center(child: CircularProgressIndicator());
       },
+    );
+  }
+
+  Widget ChatRoomListTile(
+      {chatRoomId, chatWithUsername, recieverName, reciverPic, lastMessage}) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    ChatScreen(chatWithUsername, recieverName, reciverPic)));
+      },
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 6),
+        child: ListTile(
+          leading: ClipRRect(
+            borderRadius: BorderRadius.circular(30),
+            child: Image.network(
+              reciverPic,
+              height: 40,
+              width: 40,
+            ),
+          ),
+          title: Text(
+            recieverName,
+            style: chatTileStyle(),
+          ),
+          subtitle: Text(lastMessage),
+        ),
+      ),
     );
   }
 
@@ -346,66 +389,66 @@ class _HomeState extends State<Home> {
   }
 }
 
-class ChatRoomListTile extends StatefulWidget {
-  final String lastMessage, chatRoomId, myUsername;
-  ChatRoomListTile(this.lastMessage, this.chatRoomId, this.myUsername);
+// class ChatRoomListTile extends StatefulWidget {
+//   final String lastMessage, chatRoomId, myUsername;
+//   ChatRoomListTile(this.lastMessage, this.chatRoomId, this.myUsername);
 
-  @override
-  _ChatRoomListTileState createState() => _ChatRoomListTileState();
-}
+//   @override
+//   _ChatRoomListTileState createState() => _ChatRoomListTileState();
+// }
 
-class _ChatRoomListTileState extends State<ChatRoomListTile> {
-  String profilePicUrl = "", name = "", username = "";
+// class _ChatRoomListTileState extends State<ChatRoomListTile> {
+//   String profilePicUrl = "", name = "", username = "";
 
-  getThisUserInfo() async {
-    username =
-        widget.chatRoomId.replaceAll(widget.myUsername, "").replaceAll("_", "");
-    QuerySnapshot querySnapshot = await DatabaseMethods().getUserInfo(username);
-    name = "${querySnapshot.docs[0]["name"]}";
-    profilePicUrl = "${querySnapshot.docs[0]["profileUrl"]}";
-    setState(() {});
-  }
+//   getThisUserInfo() async {
+//     username =
+//         widget.chatRoomId.replaceAll(widget.myUsername, "").replaceAll("_", "");
+//     QuerySnapshot querySnapshot = await DatabaseMethods().getUserInfo(username);
+//     name = "${querySnapshot.docs[0]["name"]}";
+//     profilePicUrl = "${querySnapshot.docs[0]["profileUrl"]}";
+//     setState(() {});
+//   }
 
-  getChatRooms() async {
-    chatRoomsStream = await DatabaseMethods().getChatRooms();
-    setState(() {});
-  }
+//   getChatRooms() async {
+//     chatRoomsStream = await DatabaseMethods().getChatRooms();
+//     setState(() {});
+//   }
 
-  @override
-  void initState() {
-    getThisUserInfo();
-    getChatRooms();
-    super.initState();
-  }
+//   @override
+//   void initState() {
+//     getThisUserInfo();
+//     getChatRooms();
+//     super.initState();
+//   }
 
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    ChatScreen(username, name, profilePicUrl)));
-      },
-      child: Container(
-        padding: EdgeInsets.all(8),
-        margin: EdgeInsets.symmetric(vertical: 8),
-        child: Row(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(30),
-              child: Image.network(
-                profilePicUrl,
-                height: 40,
-                width: 40,
-              ),
-            ),
-            SizedBox(width: 20),
-            Text(name, style: chatTileStyle())
-          ],
-        ),
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return GestureDetector(
+//       onTap: () {
+//         Navigator.push(
+//             context,
+//             MaterialPageRoute(
+//                 builder: (context) =>
+//                     ChatScreen(username, name, profilePicUrl)));
+//       },
+//       child: Container(
+//         padding: EdgeInsets.all(8),
+//         margin: EdgeInsets.symmetric(vertical: 8),
+//         child: Row(
+//           children: [
+//             ClipRRect(
+//               borderRadius: BorderRadius.circular(30),
+//               child: Image.network(
+//                 profilePicUrl,
+//                 height: 40,
+//                 width: 40,
+//               ),
+//             ),
+//             SizedBox(width: 20),
+//             Text(name, style: chatTileStyle())
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
